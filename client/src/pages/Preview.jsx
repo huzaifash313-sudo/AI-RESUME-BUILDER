@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import ResumePreview from '../components/ResumePreview'
-import { ArrowLeftIcon, Loader2, Printer, Share2 } from 'lucide-react'
+import { ArrowLeftIcon, Loader2, Printer, Share2, XCircle } from 'lucide-react'
 import api from '../configs/api'
 import toast from 'react-hot-toast'
 
@@ -11,9 +11,9 @@ const Preview = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
-  const loadResume = async () => {
+  const loadResume = useCallback(async () => {
     try {
-      // Public route call
+      setIsLoading(true)
       const { data } = await api.get(`/api/resumes/public/${resumeId}`)
       const resume = data?.resume || data;
       setResumeData(resume)
@@ -22,11 +22,11 @@ const Preview = () => {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [resumeId])
 
   useEffect(() => {
     loadResume()
-  }, [resumeId])
+  }, [loadResume])
 
   const handlePrint = () => {
     window.print();
@@ -50,7 +50,7 @@ const Preview = () => {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-slate-50 p-6">
         <div className="size-20 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mb-6">
-            <XIcon size={40} />
+            <XCircle size={40} />
         </div>
         <p className="text-center text-2xl text-slate-800 font-black tracking-tight max-w-md">{error}</p>
         <Link
@@ -64,12 +64,12 @@ const Preview = () => {
   }
 
   return (
-    <div className="bg-slate-100 min-h-screen font-poppins pb-20 selection:bg-green-100">
-      {/* Top Floating Navbar - Hidden on Print */}
+    <div className="bg-slate-100 min-h-screen font-poppins pb-20 selection:bg-green-100 print:bg-white print:pb-0">
+      {/* Navbar - Hidden on Print */}
       <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 print:hidden">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-            <Link to="/">
-                <img src="/logo.svg" alt="Nexo Logo" className="h-8 w-auto" />
+            <Link to="/" className="text-xl font-black tracking-tighter text-slate-900">
+                NEXO<span className="text-green-600">.</span>
             </Link>
             
             <div className="flex items-center gap-3">
@@ -90,9 +90,8 @@ const Preview = () => {
       </nav>
 
       {/* Resume Container */}
-      <div className="max-w-5xl mx-auto mt-10 px-4 print:mt-0 print:px-0">
-        <div className="flex flex-col items-center">
-            {/* KHRABI FIX: Humne classes pass ki hain taake Preview page par background overlap na ho */}
+      <div className="max-w-5xl mx-auto mt-10 px-4 print:mt-0 print:px-0 print:max-w-none">
+        <div className="flex flex-col items-center print:block">
             <ResumePreview
                 data={resumeData}
                 template={resumeData.template}
@@ -102,7 +101,6 @@ const Preview = () => {
         </div>
       </div>
       
-      {/* Branding for public viewers */}
       <div className="text-center mt-12 print:hidden">
         <p className="text-xs text-slate-400 font-medium">
             Generated with <span className="font-bold text-green-600">Nexo AI Resume Builder</span>
@@ -111,8 +109,5 @@ const Preview = () => {
     </div>
   )
 }
-
-// Dummy placeholder to prevent import errors in this snippet
-const XIcon = ({size}) => <span style={{fontSize: size}}>✕</span>;
 
 export default Preview;
