@@ -17,3 +17,35 @@
     @apply outline-none focus:ring border border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded-lg;
   }
 }
+/* Print/Download Styles */
+@media print {
+  @page {
+    size: A4;
+    margin: 0; /* Browser ke default margins khatam */
+  }
+
+  body {
+    background: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Resume ke ilawa baaki sab kuch chupa do */
+  nav, 
+  button, 
+  .no-print, 
+  aside {
+    display: none !important;
+  }
+
+  /* Resume Preview ko full page par fit karo */
+  .resume-preview-main {
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    overflow: hidden;
+  }
+}
