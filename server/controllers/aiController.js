@@ -15,7 +15,12 @@ export const enhanceProfessionalSummary = asyncHandler(async (req, res) => {
             messages: [
                 { 
                     role: "system", 
-                    content: "You are a professional resume writer. Rewrite the summary in 1-2 impactful sentences. Return ONLY the text." 
+                    content: `You are a professional resume writer. 
+Rewrite the user's input into a sharp, modern professional summary.
+- Max 2-3 sentences.
+- No "Job Title" headers, no "Key Responsibilities" list.
+- Just one single paragraph of text.
+- Return ONLY the final summary text and nothing else.` 
                 },
                 { role: "user", content: userContent },
             ],
