@@ -1,12 +1,9 @@
 import axios from 'axios'
 
-const api = axios.create({
-    // KHRABI FIX: Fallback lagaya hai taake agar .env miss ho to localhost:5000 use kare
-    baseURL: import.meta.env.VITE_BASE_URL || "http://localhost:5000",
-    headers: {
-        'Content-Type': 'application/json'
-    }
-})
+const API = axios.create({
+    baseURL: import.meta.env.VITE_API_URL,
+    withCredentials: true
+});
 
 // Response interceptor
 api.interceptors.response.use(
