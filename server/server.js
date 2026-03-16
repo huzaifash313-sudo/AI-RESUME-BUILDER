@@ -13,9 +13,8 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: process.env.FRONTEND_URL, // .env mein Vercel ka URL dalo
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"]
+    origin: ["http://localhost:5173", "https://ai-resume-builder-six.vercel.app"],
+    credentials: true
 }));
 
 app.get('/', (req, res) => res.send('Server is live ...'));
