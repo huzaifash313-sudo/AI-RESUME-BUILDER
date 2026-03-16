@@ -2,6 +2,7 @@ export default function requestLogger(req, res, next) {
   try {
     console.log('=== REQUEST LOGGER START ===');
     console.log('Method:', req.method, 'URL:', req.originalUrl);
+    
     console.log('Body keys:', Object.keys(req.body || {}));
 
     if (req.body && req.body.resumeData) {
@@ -9,6 +10,7 @@ export default function requestLogger(req, res, next) {
         const parsed = typeof req.body.resumeData === 'string' ? JSON.parse(req.body.resumeData) : req.body.resumeData;
         console.log('Parsed resumeData keys:', Object.keys(parsed || {}));
         console.log('Includes experience field?:', Object.prototype.hasOwnProperty.call(parsed, 'experience'));
+        
         if (Array.isArray(parsed.experience)) {
           console.log('Experience length:', parsed.experience.length);
         }
@@ -21,7 +23,12 @@ export default function requestLogger(req, res, next) {
 
     console.log('File attached?:', !!req.file);
     if (req.file) {
-      console.log('File info:', { originalname: req.file.originalname, mimetype: req.file.mimetype, path: req.file.path });
+      console.log('File info:', { 
+        originalname: req.file.originalname, 
+        mimetype: req.file.mimetype, 
+        size: req.file.size + ' bytes',
+        storage: req.file.buffer ? 'Memory (Buffer)' : 'Disk'
+      });
     }
 
     console.log('=== REQUEST LOGGER END ===');

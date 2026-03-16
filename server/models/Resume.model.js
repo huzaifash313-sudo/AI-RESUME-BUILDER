@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 const ResumeSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        required: true 
     },
     title: {
         type: String,
@@ -127,6 +128,6 @@ const ResumeSchema = new mongoose.Schema({
 
 }, {timestamps: true, minimize: false})
 
-const Resume = mongoose.model('Resume', ResumeSchema)
+const Resume = mongoose.models.Resume || mongoose.model('Resume', ResumeSchema);
 
-export default Resume
+export default Resume;

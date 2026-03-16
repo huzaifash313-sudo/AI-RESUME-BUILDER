@@ -6,19 +6,25 @@ export class ApiError extends Error {
     this.statusCode = statusCode;
   }
 }
+
 const protect = (req, res, next) => {
-  const token = req.headers.authorization;
+  let token = req.headers.authorization;
+
+  if (token && token.startsWith("Bearer")) {
+    token = token.split(" ")[1];
+  }
 
   if (!token) {
-    throw new ApiError(401, "Unauthorized");
+    return res.status(401).json({ message: "Unauthorized: No token provided" });
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decoded.userId;
+    
+    req.userId = decoded.userId || decoded.id; 
     next();
   } catch (error) {
-    throw new ApiError(401, "Unauthorized");
+    return res.status(401).json({ message: "Unauthorized: Invalid or expired token" });
   }
 };
 

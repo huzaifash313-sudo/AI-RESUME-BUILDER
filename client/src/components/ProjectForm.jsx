@@ -1,4 +1,4 @@
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, FolderCode, Lightbulb } from "lucide-react";
 import React from "react";
 
 const ProjectForm = ({ data = [], onChange }) => {
@@ -13,8 +13,11 @@ const ProjectForm = ({ data = [], onChange }) => {
   };
 
   const removeProject = (index) => {
-    const updated = data.filter((_, i) => i !== index);
-    onChange(updated);
+    // KHRABI FIX: User confirmation ke bagair delete karna data loss karwa sakta hai
+    if (window.confirm("Are you sure you want to remove this project?")) {
+      const updated = data.filter((_, i) => i !== index);
+      onChange(updated);
+    }
   };
 
   const updateProject = (index, field, value) => {
@@ -24,79 +27,93 @@ const ProjectForm = ({ data = [], onChange }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-poppins">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pb-4 border-b border-slate-100">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Projects</h3>
-          <p className="text-sm text-gray-500">Add your projects</p>
+          <h3 className="flex items-center gap-2 text-xl font-bold text-slate-800">
+            <FolderCode className="size-5 text-green-600" />
+            Projects
+          </h3>
+          <p className="text-xs text-slate-500 mt-1">Showcase your best work</p>
         </div>
         <button
           type="button"
           onClick={addProject}
-          className="flex items-center gap-2 px-3 py-1 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold bg-green-600 text-white rounded-full hover:bg-green-700 shadow-md shadow-green-100 transition-all active:scale-95"
         >
-          <Plus className="size-4" />
+          <Plus className="size-3.5" />
           Add Project
         </button>
       </div>
 
       {/* Empty State */}
       {data.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
-          <p>No projects added yet.</p>
-          <p className="text-sm">Click "Add Project" to get started.</p>
+        <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-slate-100 rounded-2xl bg-slate-50/50">
+          <div className="p-4 bg-white rounded-full shadow-sm mb-4">
+             <Lightbulb className="size-8 text-slate-300" />
+          </div>
+          <p className="text-sm font-semibold text-slate-400">No projects added yet</p>
+          <button onClick={addProject} className="mt-2 text-xs font-bold text-green-600 hover:underline">Click here to start</button>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {data.map((project, index) => (
             <div
               key={index}
-              className="p-4 border border-gray-200 rounded-lg space-y-4"
+              className="group relative p-6 bg-white border border-slate-200 rounded-2xl shadow-sm hover:border-green-200 transition-all"
             >
-              {/* Title + Delete */}
-              <div className="flex justify-between items-center">
-                <h4 className="font-medium">Project #{index + 1}</h4>
-                <button
-                  type="button"
-                  onClick={() => removeProject(index)}
-                  className="text-red-500 hover:text-red-700 transition-colors"
-                >
-                  <Trash2 className="size-4" />
-                </button>
-              </div>
+              {/* Delete Button */}
+              <button
+                type="button"
+                onClick={() => removeProject(index)}
+                className="absolute -top-2 -right-2 p-1.5 bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-100 hover:bg-red-50 rounded-full shadow-sm transition-all opacity-0 group-hover:opacity-100 z-10"
+              >
+                <Trash2 className="size-3.5" />
+              </button>
 
-              {/* Inputs - Always vertical */}
-              <div className="flex flex-col gap-3">
-                <input
-                  type="text"
-                  value={project.name}
-                  onChange={(e) =>
-                    updateProject(index, "name", e.target.value)
-                  }
-                  placeholder="Project Name"
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
+              <div className="flex flex-col gap-5">
+                {/* Project Name */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 ml-1">
+                    Project Name
+                  </label>
+                  <input
+                    type="text"
+                    value={project.name}
+                    onChange={(e) => updateProject(index, "name", e.target.value)}
+                    placeholder="e.g. Nexo Social Media Platform"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 outline-none focus:bg-white focus:ring-2 focus:ring-green-500/20 focus:border-green-600 transition-all"
+                  />
+                </div>
 
-                <input
-                  type="text"
-                  value={project.type}
-                  onChange={(e) =>
-                    updateProject(index, "type", e.target.value)
-                  }
-                  placeholder="Project Type (Web App, Mobile, etc)"
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
+                {/* Project Type */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 ml-1">
+                    Project Category
+                  </label>
+                  <input
+                    type="text"
+                    value={project.type}
+                    onChange={(e) => updateProject(index, "type", e.target.value)}
+                    placeholder="e.g. Full Stack Web Application"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 outline-none focus:bg-white focus:ring-2 focus:ring-green-500/20 focus:border-green-600 transition-all"
+                  />
+                </div>
 
-                <textarea
-                  rows={4}
-                  value={project.description}
-                  onChange={(e) =>
-                    updateProject(index, "description", e.target.value)
-                  }
-                  placeholder="Describe your project..."
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
+                {/* Description */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 ml-1">
+                    Description
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={project.description}
+                    onChange={(e) => updateProject(index, "description", e.target.value)}
+                    placeholder="Describe the problem you solved, technologies used, and the final outcome..."
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-700 outline-none focus:bg-white focus:ring-2 focus:ring-green-500/20 focus:border-green-600 transition-all leading-relaxed resize-none"
+                  />
+                </div>
               </div>
             </div>
           ))}

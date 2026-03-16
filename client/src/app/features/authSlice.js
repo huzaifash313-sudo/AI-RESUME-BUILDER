@@ -12,13 +12,19 @@ const authSlice = createSlice({
       state.token = action.payload.token;
       state.user = action.payload.user;
       state.loading = false;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', action.payload.token);
+        localStorage.setItem('user', JSON.stringify(action.payload.user));
+      }
     },
     logout: (state) => {
       state.token = null;
       state.user = null;
       state.loading = false;
-      localStorage.removeItem('token');
-      try { localStorage.removeItem('user'); } catch (e) {}
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
     },
     setLoading: (state, action) => {
       state.loading = action.payload;

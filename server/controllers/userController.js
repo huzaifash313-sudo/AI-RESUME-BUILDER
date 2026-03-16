@@ -33,47 +33,47 @@ export const registerUser = asyncHandler(async (req, res) => {
   });
 
   const token = generateToken(newUser._id);
-  newUser.password = undefined;
+  const userResponse = newUser.toObject();
+  delete userResponse.password;
 
   return res.status(201).json(
     new ApiResponse(201, {
       message: "User created successfully",
       token,
-      user: newUser
+      user: userResponse
     })
   );
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  console.log('=== LOGIN START ===');
-  console.log('Email:', email);
   
+  if (!email || !password) {
+    throw new ApiError(400, "Email and password are required");
+  }
+
   const user = await User.findOne({ email });
-  console.log('User found:', !!user);
+  
   if (!user) {
     throw new ApiError(400, "Invalid email or password");
   }
   
   const passwordMatch = user.comparePassword(password);
-  console.log('Password match:', passwordMatch);
-  console.log('Password from client:', password ? 'present' : 'missing');
-  console.log('Stored hash present:', !!user.password);
   
   if(!passwordMatch) {
     throw new ApiError(400, "Invalid email or password") 
   }
-  console.log('Login successful for:', email);
-  console.log('=== LOGIN END ===');
   
   const token = generateToken(user._id);
-  user.password = undefined;
+  
+  const userResponse = user.toObject();
+  delete userResponse.password;
 
   return res.status(200).json(
     new ApiResponse(200, {
       message: "Login successful",
       token,
-      user
+      user: userResponse
     })
   );
 });
@@ -82,11 +82,10 @@ export const loginUser = asyncHandler(async (req, res) => {
 export const getUserById = asyncHandler(async(req, res) => {
     const userId = req.userId;
 
-    const user = await User.findById(userId)
+    const user = await User.findById(userId).select("-password");
     if(!user) {
-        throw new ApiError(400, "User not found")
+        throw new ApiError(404, "User not found")
     }
-    user.password = undefined;
     return res.status(200).json(
         new ApiResponse(200, {user})
     )
@@ -95,40 +94,30 @@ export const getUserById = asyncHandler(async(req, res) => {
 export const getUserResumes = asyncHandler(async(req, res) => {
     const userId = req.userId;
 
-    const resumes = await Resume.find({userId})
-    if (!resumes.length) {
-  throw new ApiError(404, "No resumes found");
-}
+    const resumes = await Resume.find({userId});
+    
     return res.status(200).json(
-        new ApiResponse(200, {resumes})
+        new ApiResponse(200, {resumes: resumes || []})
     )
 })
 
 export const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
-  console.log('=== FORGOT PASSWORD START ===');
-  console.log('Email received:', email);
   if (!email) throw new ApiError(400, 'Email is required');
 
   const user = await User.findOne({ email });
-  console.log('User found:', !!user);
   if (!user) throw new ApiError(404, 'User not found');
 
-  // generate token
   const token = crypto.randomBytes(20).toString('hex');
   user.resetPasswordToken = token;
-  user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+  user.resetPasswordExpires = Date.now() + 3600000;
   await user.save();
-  console.log('Token saved for user:', email);
 
-  const resetUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/reset-password?token=${token}&email=${encodeURIComponent(email)}`;
-  console.log('Reset URL:', resetUrl);
+  const resetUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/reset-password/${token}?email=${encodeURIComponent(email)}`;
 
-  // Try to send email if SMTP configured, otherwise return link in response for dev testing
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
   const smtpHost = process.env.SMTP_HOST;
-  console.log('SMTP configured?', !!(smtpHost && smtpUser && smtpPass));
 
   if (smtpHost && smtpUser && smtpPass) {
     try {
@@ -148,32 +137,34 @@ export const forgotPassword = asyncHandler(async (req, res) => {
       };
 
       await transporter.sendMail(mailOptions);
-      console.log('Email sent successfully to:', user.email);
-      return res.status(200).json(new ApiResponse(200, { message: 'Reset email sent' }, 'Reset email sent'));
+      return res.status(200).json(new ApiResponse(200, { message: 'Reset email sent' }));
     } catch (mailErr) {
       console.error('Email send error:', mailErr);
-      // Fall through to return resetUrl for dev testing
     }
   }
 
-  // no SMTP or email failed: return the link so developer can test
-  console.log('=== FORGOT PASSWORD END (returning resetUrl) ===');
-  return res.status(200).json(new ApiResponse(200, { resetUrl, message: 'No SMTP configured - returned resetUrl for testing' }, 'Reset link'));
+  return res.status(200).json(new ApiResponse(200, { resetUrl, message: 'Returned resetUrl for testing' }));
 });
 
 export const resetPassword = asyncHandler(async (req, res) => {
-  const { token, email, password } = req.body;
+  const { token } = req.params;
+  const { email, password } = req.body;
+  
   if (!token || !email || !password) throw new ApiError(400, 'Token, email and new password are required');
 
-  const user = await User.findOne({ email, resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } });
+  const user = await User.findOne({ 
+    email, 
+    resetPasswordToken: token, 
+    resetPasswordExpires: { $gt: Date.now() } 
+  });
+
   if (!user) throw new ApiError(400, 'Invalid or expired token');
 
-  // update password
   const hashed = await bcrypt.hash(password, 10);
   user.password = hashed;
   user.resetPasswordToken = '';
   user.resetPasswordExpires = undefined;
   await user.save();
 
-  return res.status(200).json(new ApiResponse(200, { message: 'Password reset successful' }, 'Password reset successful'));
+  return res.status(200).json(new ApiResponse(200, { message: 'Password reset successful' }));
 });

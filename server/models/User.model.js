@@ -1,5 +1,6 @@
-import mongoose from "mongoose"
-import bcrypt from "bcrypt"
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+
 const UserSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -13,8 +14,7 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-    }
-    ,
+    },
     resetPasswordToken: {
         type: String,
         default: ''
@@ -22,12 +22,11 @@ const UserSchema = new mongoose.Schema({
     resetPasswordExpires: {
         type: Date
     }
-}, {timestamps: true})
+}, {timestamps: true});
 
 UserSchema.methods.comparePassword = function (password) {
-    return bcrypt.compareSync(password, this.password)
-}
-
-const User = mongoose.model("User", UserSchema)
+    return bcrypt.compareSync(password, this.password);
+};
+const User = mongoose.models.User || mongoose.model("User", UserSchema);
 
 export default User;

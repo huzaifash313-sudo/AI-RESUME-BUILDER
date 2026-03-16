@@ -2,13 +2,15 @@ import React from "react";
 
 const Banner = () => {
   return (
-    <div>
-      <div className="w-full py-2.5 font-medium text-sm text-green-800 text-center bg-gradient-to-r from-[#ABFF7E] to-[#FDFEFF]">
-        <p>
-          <span className="px-3 py-1 rounded-lg text-white bg-green-600 mr-2">
+    <div className="w-full border-b border-green-100">
+      <div className="w-full py-3 font-semibold text-sm text-green-900 text-center bg-gradient-to-r from-[#ABFF7E] via-[#d4ffba] to-[#ABFF7E]">
+        <p className="flex items-center justify-center gap-2">
+          <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider text-white bg-green-600 animate-pulse">
             New
           </span>
-          AI Featured Added
+          <span className="tracking-tight">
+            AI Resume Enhancement Features are now Live
+          </span>
         </p>
       </div>
     </div>

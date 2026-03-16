@@ -1,32 +1,26 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, Navigate, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useSelector } from "react-redux";
-import Loader from "../components/Loader"; // Your custom loader
-import Login from "./Login";
+import Loader from "../components/Loader";
 
 const Layout = () => {
   const { user, loading } = useSelector((state) => state.auth);
+  const location = useLocation();
 
-  // Show loader while checking auth state
-  if (loading) {
-    return <Loader />;
+  if (loading) return <Loader />;
+
+  // User checking logic
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return (
-    <div>
-      {user ? (
-        // User is authenticated, show dashboard layout
-        <div className="min-h-screen bg-gray-50">
-          <Navbar />
-          <main className="pt-4">
-            <Outlet />
-          </main>
-        </div>
-      ) : (
-        // User is not authenticated, show login/signup form
-        <Login />
-      )}
+    <div className="min-h-screen bg-slate-50">
+      <Navbar />
+      <main className="max-w-7xl mx-auto py-6 px-4">
+        <Outlet />
+      </main>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { Check, Palette } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 const ColorPicker = ({ selectedColor, onChange }) => {
   const colors = [
@@ -16,39 +16,59 @@ const ColorPicker = ({ selectedColor, onChange }) => {
   ];
 
   const [isOpen, setIsOpen] = useState(false);
+  const pickerRef = useRef(null);
+
+  // KHRABI FIX: Click outside hone par dropdown band hona chahiye
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (pickerRef.current && !pickerRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
-    <div className="relative">
+    <div className="relative" ref={pickerRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 text-sm text-purple-600 bg-gradient-to-br from-purple-50 to-purple-100 ring-purple-300 hover:ring transition-all px-3 py-2 rounded-lg"
+        className="flex items-center gap-2 text-sm font-semibold text-slate-700 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 transition-all px-4 py-2 rounded-full"
       >
-        <Palette size={16} /> <span className="max-sm:hidden">Accent</span>
+        {/* KHRABI FIX: Current color ka preview button mein dikhna chahiye */}
+        <div 
+            className="size-4 rounded-full border border-black/10 shadow-inner" 
+            style={{ backgroundColor: selectedColor }}
+        ></div>
+        <span className="max-sm:hidden">Theme Color</span>
       </button>
 
       {isOpen && (
-        <div className="grid grid-cols-4 w-60 gap-2 absolute top-full left-0 p-3 mt-2 z-10 bg-white rounded-md border border-gray-200 shadow-sm">
+        <div className="grid grid-cols-5 w-64 gap-3 absolute top-full right-0 md:left-0 p-4 mt-3 z-[100] bg-white rounded-2xl border border-slate-100 shadow-2xl animate-in fade-in zoom-in duration-200">
           {colors.map((color) => (
             <div
               key={color.value}
-              className="relative cursor-pointer group flex flex-col"
+              className="relative cursor-pointer group flex flex-col items-center"
               onClick={() => {
                 onChange(color.value);
                 setIsOpen(false);
               }}
             >
               <div
-                className="w-12 h-12 rounded-full border-2 border-transparent group-hover:border-black/25 transition-colors"
+                className={`size-10 rounded-full border-2 transition-all group-hover:scale-110 shadow-sm ${
+                    selectedColor === color.value ? 'border-slate-800 ring-2 ring-slate-100' : 'border-transparent'
+                }`}
                 style={{ backgroundColor: color.value }}
-              ></div>
-
-              {selectedColor === color.value && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Check size={16} className="text-white" />
-                </div>
-              )}
-
-              <p className="text-xs text-center mt-1 text-gray-600">{color.name}</p>
+              >
+                {selectedColor === color.value && (
+                    <div className="flex items-center justify-center h-full">
+                        <Check size={14} className={color.name === "White" ? "text-black" : "text-white"} />
+                    </div>
+                )}
+              </div>
+              <p className="text-[10px] font-bold uppercase tracking-tighter mt-1.5 text-slate-400 group-hover:text-slate-900 transition-colors">
+                {color.name}
+              </p>
             </div>
           ))}
         </div>

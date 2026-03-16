@@ -7,98 +7,120 @@ const Testimonial = () => {
         {
             image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200',
             name: 'Briar Martin',
-            handle: '@neilstellar',
+            handle: '@briar_dev',
+            text: "Nexo's AI suggestions helped me rewrite my boring summary into something that actually gets noticed!"
         },
         {
             image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200',
             name: 'Avery Johnson',
-            handle: '@averywrites',
+            handle: '@avery_it',
+            text: "The resume templates are so clean. I landed 3 interviews within a week of using the Modern template."
         },
         {
             image: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=200&auto=format&fit=crop&q=60',
             name: 'Jordan Lee',
-            handle: '@jordantalks',
+            handle: '@jordan_stack',
+            text: "Finally, a resume builder that doesn't mess up the formatting when I export to PDF. Highly recommended!"
         },
         {
             image: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=60',
             name: 'Sophia Brown',
-            handle: '@sophiatalks',
+            handle: '@sophia_codes',
+            text: "The AI parsing feature is magic. It extracted everything from my old LinkedIn profile perfectly."
         },
     ];
 
     const CreateCard = ({ card }) => (
-        <div className="p-4 rounded-lg mx-4 shadow hover:shadow-lg transition-all duration-200 w-72 flex-shrink-0 bg-white">
+        <div className="p-6 rounded-2xl mx-4 shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300 w-80 flex-shrink-0 bg-white group">
             <div className="flex gap-3 items-center">
                 <img
-                    className="w-11 h-11 rounded-full object-cover border-2 border-white"
+                    className="w-12 h-12 rounded-full object-cover grayscale group-hover:grayscale-0 transition-all"
                     src={card.image}
-                    alt={`${card.name}, user testimonial`}
+                    alt={`${card.name} testimonial`}
                 />
                 <div className="flex flex-col">
                     <div className="flex items-center gap-1">
-                        <p className="font-semibold text-gray-800">{card.name}</p>
-                        <svg
-                            className="w-3 h-3 text-green-500"
-                            viewBox="0 0 12 12"
-                            fill="currentColor"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path d="M4.555.72a4 4 0 0 1-.297.24c-.179.12-.38.202-.59.244a4 4 0 0 1-.38.041c-.48.039-.721.058-.922.129a1.63 1.63 0 0 0-.992.992c-.071.2-.09.441-.129.922a4 4 0 0 1-.041.38 1.6 1.6 0 0 1-.245.59 3 3 0 0 1-.239.297c-.313.368-.47.551-.56.743-.213.444-.213.96 0 1.404.09.192.247.375.56.743.125.146.187.219.24.297.12.179.202.38.244.59.018.093.026.189.041.38.039.48.058.721.129.922.163.464.528.829.992.992.2.071.441.09.922.129.191.015.287.023.38.041.21.042.411.125.59.245.078.052.151.114.297.239.368.313.551.47.743.444.213.96.213 1.404 0 .192-.09.375-.247.743-.56.146-.125.219-.187.297-.24.179-.12.38-.202.59-.244a4 4 0 0 1 .38-.041c.48-.039.721-.058.922-.129.464-.163.829-.528.992-.992.071-.2.09-.441.129-.922a4 4 0 0 1 .041-.38c.042-.21.125-.411.245-.59.052-.078.114-.151.239-.297.313-.368.47-.551.56-.743.213-.444.213-.96 0-1.404-.09-.192-.247-.375-.56-.743a4 4 0 0 1-.24-.297 1.6 1.6 0 0 1-.244-.59 3 3 0 0 1-.041-.38c-.039-.48-.058-.721-.129-.922a1.63 1.63 0 0 0-.992-.992c-.2-.071-.441-.09-.922-.129a4 4 0 0 1-.38-.041 1.6 1.6 0 0 1-.59-.245A3 3 0 0 1 7.445.72C7.077.407 6.894.25 6.702.16a1.63 1.63 0 0 0-1.404 0c-.192.09-.375.247-.743.56m4.07 3.998a.488.488 0 0 0-.691-.69l-2.91 2.91-.958-.957a.488.488 0 0 0-.69.69l1.302 1.302c.19.191.5.191.69 0z" />
+                        <p className="font-bold text-slate-800 leading-tight">{card.name}</p>
+                        <svg className="w-3.5 h-3.5 text-blue-500 fill-current" viewBox="0 0 24 24">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
                         </svg>
                     </div>
-                    <span className="text-xs text-gray-500">{card.handle}</span>
+                    <span className="text-xs font-medium text-slate-400">{card.handle}</span>
                 </div>
             </div>
-            <p className="text-sm py-4 text-gray-800">
-                Radiant made undercutting all of our competitors an absolute breeze.
+            <p className="text-[13px] leading-relaxed py-4 text-slate-600 italic">
+                "{card.text}"
             </p>
         </div>
     );
 
     return (
-        <div>
+        <section className="py-20 bg-slate-50/50">
             {/* Section Title */}
-            <div id="testimonials" className="flex flex-col items-center my-10 scroll-mt-12">
-                <div className="flex items-center gap-2 text-sm text-green-600 bg-green-100 rounded-full px-6 py-1.5">
-                    <BookUserIcon className="w-5 h-5 stroke-green-600"/>
-                    <span>Testimonials</span>
+            <div id="testimonials" className="flex flex-col items-center mb-10 scroll-mt-24 px-4">
+                <div className="flex items-center gap-2 text-sm font-bold text-green-700 bg-green-100 rounded-full px-5 py-1.5 mb-4">
+                    <BookUserIcon className="w-4 h-4"/>
+                    <span className="uppercase tracking-widest">Testimonials</span>
                 </div>
                 <Title
-                    title="Don't just take our words"
-                    description="Hear what our users say about us. We're always looking for ways to improve. If you have a positive experience with us, leave a review."
+                    title="Success stories from users"
+                    description="Join thousands of professionals who have accelerated their careers using Nexo's intelligent resume tools."
                 />
             </div>
 
             {/* Marquee Rows */}
-            {[0, 1].map((i) => (
-                <div key={i} className="marquee-row w-full mx-auto max-w-5xl overflow-hidden relative">
-                    <div className="absolute left-0 top-0 h-full w-20 z-10 pointer-events-none bg-gradient-to-r from-white to-transparent"></div>
-                    <div className={`marquee-inner flex transform-gpu min-w-[200%] pt-10 pb-5 ${i === 1 ? 'marquee-reverse' : ''}`}>
-                        {[...cardsData, ...cardsData].map((card, index) => (
-                            <CreateCard key={index} card={card} />
-                        ))}
+            <div className="flex flex-col gap-2 overflow-hidden py-10">
+                {[0, 1].map((i) => (
+                    <div key={i} className="marquee-row w-full flex relative group">
+                        <div className={`marquee-inner flex py-2 ${i === 1 ? 'marquee-reverse' : ''} hover:[animation-play-state:paused]`}>
+                            {[...cardsData, ...cardsData, ...cardsData].map((card, index) => (
+                                <CreateCard key={index} card={card} />
+                            ))}
+                        </div>
                     </div>
-                    <div className="absolute right-0 top-0 h-full w-20 md:w-40 z-10 pointer-events-none bg-gradient-to-l from-white to-transparent"></div>
-                </div>
-            ))}
+                ))}
+            </div>
 
-            {/* Marquee Animation */}
-            <style>{`
+            <style dangerouslySetInnerHTML={{ __html: `
                 @keyframes marqueeScroll {
-                    0% { transform: translateX(0%); }
-                    100% { transform: translateX(-50%); }
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-33.33%); }
                 }
 
                 .marquee-inner {
-                    animation: marqueeScroll 25s linear infinite;
+                    display: flex;
+                    width: max-content;
+                    animation: marqueeScroll 40s linear infinite;
                 }
 
                 .marquee-reverse {
                     animation-direction: reverse;
                 }
-            `}</style>
-        </div>
+
+                /* Fading masks for the sides */
+                #testimonials-container {
+                    position: relative;
+                }
+                .marquee-row::before, .marquee-row::after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    width: 150px;
+                    height: 100%;
+                    z-index: 2;
+                    pointer-events: none;
+                }
+                .marquee-row::before {
+                    left: 0;
+                    background: linear-gradient(to right, rgb(248 250 252), transparent);
+                }
+                .marquee-row::after {
+                    right: 0;
+                    background: linear-gradient(to left, rgb(248 250 252), transparent);
+                }
+            `}} />
+        </section>
     )
 }
 
-export default Testimonial
+export default Testimonial;
